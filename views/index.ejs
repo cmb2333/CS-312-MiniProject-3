@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog Home</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div class="header">
+  <h1>CS312 Mini-Project: Music Blog</h1>
+  <p>Explore the latest posts in Rock Music</p>
+</div>
+
+<div class="topnav">
+    <a href="/posts/new">Create Post</a>
+</div>
+
+<div class="row">
+  <div class="leftcolumn">
+    <% posts.forEach(post => { %>
+      <div class="card">
+        <h2><%= post.title %></h2>
+        <p>Posted by <%= post.name %> on <%= post.postedOn.toDateString() %></p>
+        <p><%= post.content %></p>
+        <a href="/posts/edit/<%= post.id %>">Edit</a>
+        <form action="/posts/delete/<%= post.id %>" method="POST" style="display: inline;">
+          <button type="submit">Delete</button>
+        </form>
+      </div>
+    <% }) %>
+  </div>
+
+  <div class="rightcolumn">
+    <div class="card">
+      <h2 class="section-title">Album of the Year</h2>
+      <img src="/images/TMBTE.jpg" alt="Album of the Year" class="album-cover">
+    </div>
+    <div class="card">
+      <h2 class="section-title">Top Songs</h2>
+      <img src="/images/summoning.jpg" alt="#1" class="song-cover">
+      <img src="/images/DOPOM.jpg" alt="#2" class="song-cover">
+      <img src="/images/koolAid.jpg" alt="#3" class="song-cover">
+      <img src="/images/popularMonster.jpg" alt="#4" class="song-cover">
+      <img src="/images/lost.jpg" alt="#5" class="song-cover">
+    </div>
+    <div class="card">
+      <h2 class="section-title">Follow Me</h2>
+      <div class="follow-links">
+        <a href="https://github.com/cmb2333">GitHub</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <h2>Sources</h2>
+    <p>https://www.w3schools.com/howto/howto_css_blog_layout.asp</p>
+    <p>https://www.geeksforgeeks.org/create-a-blog-website-layout-using-html-and-css/</p>
+    <p>https://dev.to/5t3ph/style-a-blog-layout-with-css-3elh</p>
+    <p>https://www.w3schools.com/html/html_responsive.asp</p>
+    <p>https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Responsive_Design</p>
+</div>
+
+</body>
+</html>
+
+
+
+
