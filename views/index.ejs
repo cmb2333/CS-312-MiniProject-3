@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <head>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blog Home</title>
   <link rel="stylesheet" href="/style.css">
@@ -12,7 +13,10 @@
 </div>
 
 <div class="topnav">
-    <a href="/posts/new">Create Post</a>
+  <a href="/">Home</a>
+  <a href="/posts/new">Create Post</a>
+  <a href="/signup">Sign Up</a>
+  <a href="/signin">Sign In</a>
 </div>
 
 <div class="row">
@@ -20,15 +24,16 @@
     <% posts.forEach(post => { %>
       <div class="card">
         <h2><%= post.title %></h2>
-        <p>Posted by <%= post.name %> on <%= post.postedOn.toDateString() %></p>
-        <p><%= post.content %></p>
-        <a href="/posts/edit/<%= post.id %>">Edit</a>
-        <form action="/posts/delete/<%= post.id %>" method="POST" style="display: inline;">
+        <p>Posted by <%= post.creator_name %> on <%= post.date_created.toDateString() %></p>
+        <p><%= post.body %></p>
+        <a href="/posts/edit/<%= post.blog_id %>">Edit</a>
+        <form action="/posts/delete/<%= post.blog_id %>" method="POST" style="display: inline;">
           <button type="submit">Delete</button>
         </form>
       </div>
     <% }) %>
   </div>
+  
 
   <div class="rightcolumn">
     <div class="card">
@@ -37,11 +42,11 @@
     </div>
     <div class="card">
       <h2 class="section-title">Top Songs</h2>
-      <img src="/images/summoning.jpg" alt="#1" class="song-cover">
-      <img src="/images/DOPOM.jpg" alt="#2" class="song-cover">
-      <img src="/images/koolAid.jpg" alt="#3" class="song-cover">
-      <img src="/images/popularMonster.jpg" alt="#4" class="song-cover">
-      <img src="/images/lost.jpg" alt="#5" class="song-cover">
+      <img src="/images/summoning.jpg" alt="summoning" class="song-cover">
+      <img src="/images/DOPOM.jpg" alt="DOPOM" class="song-cover">
+      <img src="/images/koolAid.jpg" alt="koolAid" class="song-cover">
+      <img src="/images/popularMonster.jpg" alt="popularMonster" class="song-cover">
+      <img src="/images/lost.jpg" alt="lost" class="song-cover">
     </div>
     <div class="card">
       <h2 class="section-title">Follow Me</h2>
@@ -54,15 +59,16 @@
 
 <div class="footer">
   <h2>Sources</h2>
-    <p>https://www.w3schools.com/howto/howto_css_blog_layout.asp</p>
-    <p>https://www.geeksforgeeks.org/create-a-blog-website-layout-using-html-and-css/</p>
-    <p>https://dev.to/5t3ph/style-a-blog-layout-with-css-3elh</p>
-    <p>https://www.w3schools.com/html/html_responsive.asp</p>
-    <p>https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Responsive_Design</p>
+  <p>https://www.w3schools.com/howto/howto_css_blog_layout.asp</p>
+  <p>https://www.geeksforgeeks.org/create-a-blog-website-layout-using-html-and-css/</p>
+  <p>https://dev.to/5t3ph/style-a-blog-layout-with-css-3elh</p>
+  <p>https://www.w3schools.com/html/html_responsive.asp</p>
+  <p>https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Responsive_Design</p>
 </div>
 
 </body>
 </html>
+
 
 
 
