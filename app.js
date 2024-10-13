@@ -135,6 +135,16 @@ app.post('/signin', async (req, res) => {
   }
 });
 
+app.get('/signout', (req, res) => {
+    // Remove session by "destroying"
+    req.session.destroy(err => {
+        if (err) {
+            return res.status(500).send("Unable to sign out");
+        }
+        res.redirect('/');
+    });
+});
+
 app.listen(3000, () => {
   console.log('Server is running on http://localhost:3000');
 });

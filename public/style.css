@@ -12,7 +12,7 @@ https://www.w3schools.com/css/tryit.asp?filename=trycss_forms */
   body {
     font-family: Arial;
     padding: 10px;
-    background: #f1f1f1;
+    background: #c0c0c0;
   }
   
   /* Header/Blog Title */
@@ -51,18 +51,19 @@ https://www.w3schools.com/css/tryit.asp?filename=trycss_forms */
   .leftcolumn {   
     float: left;
     width: 75%;
+    background-color: #c0c0c0;
   }
   
   .rightcolumn {
     float: left;
     width: 25%;
-    background-color: #f1f1f1;
+    background-color: #c0c0c0;
     padding-left: 20px;
   }
   
   /* Images */
   .album-cover, .song-cover, .artist-cover {
-    background-color: #aaa;
+    background-color: #696969;
     width: 100%;
     padding: 20px;
   }
@@ -143,4 +144,27 @@ https://www.w3schools.com/css/tryit.asp?filename=trycss_forms */
     background-color: #f2f2f2;
     padding: 20px;
   }
+
+  /* Background image for authentication pages */
+.auth-page {
+  background: url('/images/concert.jpeg') no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding-top: 20vh;
+  height: 100vh;
+}
+
+.auth-card {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
   

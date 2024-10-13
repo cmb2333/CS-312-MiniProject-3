@@ -16,9 +16,11 @@
   <a href="/">Home</a>
   <a href="/posts/new">Create Post</a>
   <% if (user) { %>
-    <p>Welcome, <%= user.name %>! <a href="/signout">Sign Out</a></p>
+    <span>Welcome, <%= user.name %>!</span>
+    <a href="/signout" style="float: right;">Sign Out</a>
   <% } else { %>
-    <p><a href="/signup">Sign Up</a> | <a href="/signin">Sign In</a></p>
+    <a href="/signup" style="float: right;">Sign Up</a>
+    <a href="/signin" style="float: right;">Sign In</a>
   <% } %>
 </div>
 
