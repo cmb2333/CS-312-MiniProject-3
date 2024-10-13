@@ -15,8 +15,11 @@
 <div class="topnav">
   <a href="/">Home</a>
   <a href="/posts/new">Create Post</a>
-  <a href="/signup">Sign Up</a>
-  <a href="/signin">Sign In</a>
+  <% if (user) { %>
+    <p>Welcome, <%= user.name %>! <a href="/signout">Sign Out</a></p>
+  <% } else { %>
+    <p><a href="/signup">Sign Up</a> | <a href="/signin">Sign In</a></p>
+  <% } %>
 </div>
 
 <div class="row">
