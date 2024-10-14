@@ -150,7 +150,6 @@ https://www.w3schools.com/css/tryit.asp?filename=trycss_forms */
   background: url('/images/concert.jpeg') no-repeat center center fixed;
   background-size: cover;
   display: flex;
-  display: flex;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;

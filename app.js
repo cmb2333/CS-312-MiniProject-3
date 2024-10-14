@@ -19,7 +19,7 @@ app.use(session({
     secret: 'please',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true } 
+    cookie: { secure: false } 
 }));
 
 // Display databsae entries on page: https://www.geeksforgeeks.org/how-to-connect-sql-server-database-from-javascript-in-the-browser/
@@ -28,9 +28,8 @@ app.get('/', async (req, res) => {
     try {
         const result = await pool.query("SELECT * FROM blogs ORDER BY date_created DESC");
 
-        // Check if user data is available in the session
         const user = req.session && req.session.userId ? req.session : null;
-        res.render('index', { posts: result.rows, user: user });
+        res.render('index', { posts: result.rows, user: req.session.user || null, message: null });
 
     } catch (err) {
         console.error("Error occurred while fetching posts:", err);
@@ -40,37 +39,109 @@ app.get('/', async (req, res) => {
 
 // SQL and Javascript is my nightmare https://www.w3schools.com/nodejs/nodejs_mysql_update.asp
 
-// Protect the route for creating new post
 app.get('/posts/new', requireAuth, (req, res) => {
-    res.render('new');
+    res.render('posts/new');
 });
 
-// Protect the route for editing existing post
-app.get('/posts/edit/:id', requireAuth, async (req, res) => {
-    try {
-        const postId = req.params.id;
-        const result = await pool.query("SELECT * FROM blogs WHERE blog_id = $1", [postId]);
-        if (result.rows.length === 0) {
-            return res.status(404).send("Post not found");
-        }
-        res.render('edit', { post: result.rows[0] });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Server error");
-    }
-});
+// More Javacript and SQL https://www.w3schools.com/nodejs/nodejs_mysql_insert.asp
+app.post('/posts/new', requireAuth, async (req, res) => {
+    const { title, body } = req.body;
 
-// Protect the route for deleting post
-app.post('/posts/delete/:id', requireAuth, async (req, res) => {
     try {
-        const postId = req.params.id;
-        await pool.query("DELETE FROM blogs WHERE blog_id = $1", [postId]);
+        await pool.query(
+            "INSERT INTO blogs (creator_name, creator_user_id, title, body, date_created) VALUES ($1, $2, $3, $4, NOW())",
+            [req.session.user.name, req.session.user.id, title, body]
+        );
         res.redirect('/');
+
     } catch (err) {
-        console.error(err);
+        console.error('Error while inserting post:', err);
         res.status(500).send("Server error");
     }
 });
+
+// Allow only the user who created the post to edit it
+app.get('/posts/edit/:id', requireAuth, async (req, res) => {
+    const postId = req.params.id;
+
+    try {
+        const result = await pool.query(
+            "SELECT * FROM blogs WHERE blog_id = $1 AND creator_user_id = $2", 
+            [postId, req.session.userId]
+        );
+
+        if (result.rowCount === 0) {
+            // User does not have permission
+            const postsResult = await pool.query("SELECT * FROM blogs ORDER BY date_created DESC");
+            return res.render('index', {
+                posts: postsResult.rows,
+                user: req.session.user || null,
+                message: "You do not have permission to edit this post."
+            });
+        }
+        const post = result.rows[0];
+        res.render('posts/edit', { post, user: req.session.user || null, message: null });
+
+    } catch (err) {
+        console.error('Error while fetching post for editing:', err);
+        res.status(500).send("Server error");
+    }
+});
+
+app.post('/posts/edit/:id', requireAuth, async (req, res) => {
+    const postId = req.params.id;
+    const { title, body } = req.body;
+
+    try {
+        const result = await pool.query(
+            "UPDATE blogs SET title = $1, body = $2 WHERE blog_id = $3 AND creator_user_id = $4",
+            [title, body, postId, req.session.userId]
+        );
+
+        if (result.rowCount === 0) {
+            // No rows updated = user doesnt have permission
+            const postsResult = await pool.query("SELECT * FROM blogs ORDER BY date_created DESC");
+            return res.render('index', {
+                posts: postsResult.rows,
+                user: req.session.user || null,
+                message: "You do not have permission to edit this post."
+            });
+        }
+        res.redirect('/');
+
+    } catch (err) {
+        console.error('Error while updating the post:', err);
+        res.status(500).send("Server error");
+    }
+});
+
+// Allow only the user who created the post to delete it
+app.post('/posts/delete/:id', requireAuth, async (req, res) => {
+    const postId = req.params.id;
+
+    try {
+        const result = await pool.query(
+            "DELETE FROM blogs WHERE blog_id = $1 AND creator_user_id = $2",
+            [postId, req.session.userId]
+        );
+
+        if (result.rowCount === 0) {
+            // User does not have permission to delete the post
+            const postsResult = await pool.query("SELECT * FROM blogs ORDER BY date_created DESC");
+            return res.render('index', {
+                posts: postsResult.rows,
+                user: req.session.user || null,
+                message: "You do not have permission to delete this post."
+            });
+        }
+        res.redirect('/');
+
+    } catch (err) {
+        console.error('Error while deleting the post:', err);
+        res.status(500).send("Server error");
+    }
+});
+
 
 app.get('/signup', (req, res) => {
   res.render('signup'); 
@@ -84,6 +155,7 @@ app.use(blogRoutes);
 
 // Sign up and sign in tutorial: https://medium.com/@shahzarana4/how-to-create-a-secure-login-and-registration-with-node-js-express-js-bcryptjs-and-jsonwebtoken-1eecb8ef80f2
 // More Authentication https://www.honeybadger.io/blog/javascript-authentication-guide/
+// Even more Authentication: https://codeshack.io/basic-login-system-nodejs-express-mysql/
 
 app.post('/signup', async (req, res) => {
     const { name, user_id, password } = req.body;
@@ -127,7 +199,11 @@ app.post('/signin', async (req, res) => {
 
       // Set user session
       req.session.userId = user.user_id;
-      res.redirect('/');
+        req.session.user = {
+            id: user.user_id,
+            name: user.name
+        };
+        res.redirect('/');
 
   } catch (err) {
       console.error(err);
@@ -157,4 +233,3 @@ function requireAuth(req, res, next) {
         return res.redirect('/signin');
     }
 }
-
